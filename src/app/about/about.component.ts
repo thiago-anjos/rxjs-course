@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { fromEvent, timer } from 'rxjs';
+import { Observable, fromEvent, noop, timer } from 'rxjs';
 
 @Component({
   selector: 'about',
@@ -11,21 +11,26 @@ export class AboutComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    //wait 3 seconds to initiate and then it goes 1 second and on
-    const interval$ = timer(3000,1000);
-    const sub = interval$.subscribe(val => console.log(`stream 01: ${val}`))
+    const http$ = new Observable((subscriber)=>{
+      fetch('api/courses')
+        .then(res =>{
+          return res.json()
+        })
+        .then(body =>{
+          subscriber.next(body)
+          subscriber.complete();
+        })
+        .catch(err =>{
+          subscriber.error(err)
+        })
+    })
 
-    setTimeout(()=>{
-      sub.unsubscribe()
-    },5000)
+    http$.subscribe(
+      courses => console.log(courses),
+      noop,
+      () => console.log('complete')
+    )
 
-    // click observable
-    const click$ = fromEvent(document, 'click');
-    click$.subscribe(
-      evt => console.log(evt),
-      err => console.log(err),
-      () => console.log('completed')
-    );
   }
 
 }
