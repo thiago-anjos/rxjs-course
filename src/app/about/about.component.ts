@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { interval, timer } from 'rxjs';
+import { fromEvent, timer } from 'rxjs';
 
 @Component({
   selector: 'about',
@@ -15,6 +15,10 @@ export class AboutComponent implements OnInit {
     const interval$ = timer(3000,1000);
     interval$.subscribe(val => console.log(`stream 01: ${val}`))
     interval$.subscribe(val => console.log(`stream 02: ${val}`))
+
+    // click observable
+    const click$ = fromEvent(document, 'click');
+    click$.subscribe(evt => console.log(evt));
   }
 
 }
