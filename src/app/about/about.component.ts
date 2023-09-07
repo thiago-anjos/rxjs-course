@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { interval } from 'rxjs';
+import { interval, timer } from 'rxjs';
 
 @Component({
   selector: 'about',
@@ -11,7 +11,8 @@ export class AboutComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    const interval$ = interval(1000);
+    //wait 3 seconds to initiate and then it goes 1 second and on
+    const interval$ = timer(3000,1000);
     interval$.subscribe(val => console.log(`stream 01: ${val}`))
     interval$.subscribe(val => console.log(`stream 02: ${val}`))
   }
