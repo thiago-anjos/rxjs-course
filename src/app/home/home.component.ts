@@ -3,7 +3,6 @@ import { Course } from '../model/course'
 import { Observable } from 'rxjs'
 import { map, shareReplay, tap } from 'rxjs/operators'
 import { createHttpObservable } from '../utils/httpObservable'
-import { noop } from 'rxjs'
 
 @Component({
     selector: 'home',
