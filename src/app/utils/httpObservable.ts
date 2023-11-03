@@ -8,7 +8,7 @@ export function createHttpObservable(url: string) {
 
         fetch(url, { signal })
             .then((res) => {
-                return res.json()
+                return res.ok ? res.json() :  subscriber.error(`Request failure ${res.status}`)
             })
             .then((body) => {
                 subscriber.next(body)
