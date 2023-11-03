@@ -14,6 +14,7 @@ import {
     debounceTime,
     distinctUntilChanged,
     switchMap,
+    startWith,
 } from 'rxjs/operators'
 import { Lesson } from '../model/lesson'
 import { createHttpObservable } from '../utils/httpObservable'
@@ -38,19 +39,13 @@ export class CourseComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        const searchedLessons$ = fromEvent<any>(
-            this.input.nativeElement,
-            'keyup'
-        ).pipe(
+        this.lessons$ = fromEvent<any>(this.input.nativeElement, 'keyup').pipe(
             map((event) => event.target.value),
+            startWith(''),
             debounceTime(400), // wait 400 miliseconds until log it to the console
             distinctUntilChanged(), // prevent duplicates values in output
             switchMap((search) => this.loadLessons(search)) // only send the last emmited values, cancelling the others
         )
-
-        const initialLessons$ = (this.lessons$ = this.loadLessons())
-
-        this.lessons$ = concat(initialLessons$, searchedLessons$)
     }
 
     loadLessons(search: string = ''): Observable<Lesson[]> {
