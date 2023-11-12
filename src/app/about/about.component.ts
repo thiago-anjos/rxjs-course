@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core'
-import { concat, forkJoin, noop, of, interval, Subject } from 'rxjs'
+import {
+    concat,
+    forkJoin,
+    noop,
+    of,
+    interval,
+    Subject,
+    BehaviorSubject,
+} from 'rxjs'
 import { createHttpObservable } from '../utils/httpObservable'
 
 @Component({
@@ -11,7 +19,7 @@ export class AboutComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        const subject = new Subject()
+        const subject = new BehaviorSubject(0)
 
         const series$ = subject.asObservable()
 
@@ -20,17 +28,14 @@ export class AboutComponent implements OnInit {
         subject.next(1)
         subject.next(2)
         subject.next(3)
-
-        //imagine that the stream of data still is emitting values
         //subject.complete()
 
-        //after some time, later of the last subscription
-        //happen another subscription
-        // if not occur another emission the latest subscription will not receive anything
         setTimeout(() => {
+            // Even this subscription is latest it will receive the last emmited value that is 3
             series$.subscribe((x) => console.log('second subscription', x))
-            // if happen another emit of data stream, so the latest subscription will receive the 4 number
+            // if there is another emitted value
             subject.next(4)
+            // the two subscriptions will received it;
         }, 3000)
     }
 }
