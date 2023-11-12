@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { concat, forkJoin, noop, of, interval } from 'rxjs'
+import { concat, forkJoin, noop, of, interval, Subject } from 'rxjs'
 import { createHttpObservable } from '../utils/httpObservable'
 
 @Component({
@@ -11,15 +11,15 @@ export class AboutComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        // const interval1$ = interval(1000)
-        // const sub = interval1$.subscribe(console.log)
-        // setTimeout(() => sub.unsubscribe(), 6000)
+        const subject = new Subject()
 
-        const http$ = createHttpObservable('/api/courses')
-        const sub = http$.subscribe(console.log)
+        const series$ = subject.asObservable()
 
-        setTimeout(() => {
-            sub.unsubscribe()
-        }, 0)
+        series$.subscribe(console.log)
+
+        subject.next(1)
+        subject.next(2)
+        subject.next(3)
+        subject.complete()
     }
 }
