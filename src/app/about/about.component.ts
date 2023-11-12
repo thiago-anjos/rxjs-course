@@ -28,7 +28,8 @@ export class AboutComponent implements OnInit {
         subject.next(1)
         subject.next(2)
         subject.next(3)
-        //subject.complete()
+        // if the subject complete, even the latest subscription will not receive the latest emitted value
+        subject.complete()
 
         setTimeout(() => {
             // Even this subscription is latest it will receive the last emmited value that is 3
