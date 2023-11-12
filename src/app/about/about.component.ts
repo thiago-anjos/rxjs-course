@@ -29,6 +29,8 @@ export class AboutComponent implements OnInit {
         // if not occur another emission the latest subscription will not receive anything
         setTimeout(() => {
             series$.subscribe((x) => console.log('second subscription', x))
+            // if happen another emit of data stream, so the latest subscription will receive the 4 number
+            subject.next(4)
         }, 3000)
     }
 }
