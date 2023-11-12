@@ -7,7 +7,7 @@ import {
 } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { Course } from '../model/course'
-import { Observable, concat, fromEvent } from 'rxjs'
+import { Observable, concat, forkJoin, fromEvent } from 'rxjs'
 import {
     map,
     tap,
@@ -34,8 +34,21 @@ export class CourseComponent implements OnInit, AfterViewInit {
     constructor(private route: ActivatedRoute) {}
 
     ngOnInit() {
+        console.log('olá cursos')
         this.courseId = this.route.snapshot.params['id']
-        this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
+        const course$ = (this.course$ = createHttpObservable(
+            `/api/courses/${this.courseId}`
+        ))
+        const lesson$ = this.loadLessons()
+
+        forkJoin([course$, lesson$])
+            .pipe(
+                tap(([courseResponse, lessonResponse]) => {
+                    console.log('courseResponse', courseResponse)
+                    console.log('lessonResponse', lessonResponse)
+                })
+            )
+            .subscribe()
     }
 
     ngAfterViewInit() {
