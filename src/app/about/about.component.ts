@@ -7,6 +7,7 @@ import {
     interval,
     Subject,
     BehaviorSubject,
+    AsyncSubject,
 } from 'rxjs'
 import { createHttpObservable } from '../utils/httpObservable'
 
@@ -19,7 +20,7 @@ export class AboutComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        const subject = new BehaviorSubject(0)
+        const subject = new AsyncSubject()
 
         const series$ = subject.asObservable()
 
@@ -28,15 +29,14 @@ export class AboutComponent implements OnInit {
         subject.next(1)
         subject.next(2)
         subject.next(3)
-        // if the subject complete, even the latest subscription will not receive the latest emitted value
+
+        //AsyncSubject only emit the last value, so it will be 3
+        // And only emit if the complete() method is called
         subject.complete()
 
         setTimeout(() => {
-            // Even this subscription is latest it will receive the last emmited value that is 3
+            //AsyncSubject only emit the last value, so it will be 3
             series$.subscribe((x) => console.log('second subscription', x))
-            // if there is another emitted value
-            subject.next(4)
-            // the two subscriptions will received it;
         }, 3000)
     }
 }
