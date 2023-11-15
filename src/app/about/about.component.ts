@@ -8,6 +8,7 @@ import {
     Subject,
     BehaviorSubject,
     AsyncSubject,
+    ReplaySubject,
 } from 'rxjs'
 import { createHttpObservable } from '../utils/httpObservable'
 
@@ -20,7 +21,7 @@ export class AboutComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        const subject = new AsyncSubject()
+        const subject = new ReplaySubject()
 
         const series$ = subject.asObservable()
 
@@ -32,11 +33,14 @@ export class AboutComponent implements OnInit {
 
         //AsyncSubject only emit the last value, so it will be 3
         // And only emit if the complete() method is called
-        subject.complete()
+
+        //do not need the complete finish to emmit the values
+        //subject.complete()
 
         setTimeout(() => {
-            //AsyncSubject only emit the last value, so it will be 3
             series$.subscribe((x) => console.log('second subscription', x))
+            // it will be emitted for the first and second subscription
+            subject.next(4)
         }, 3000)
     }
 }
