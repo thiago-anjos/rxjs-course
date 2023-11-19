@@ -53,4 +53,10 @@ export class Store {
             })
         )
     }
+
+    selectCourse(id: number):Observable<Course> {
+        return this.courses$.pipe(
+            map((courses) => courses.find((course: Course) => course.id === id))
+        )
+    }
 }

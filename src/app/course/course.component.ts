@@ -18,6 +18,7 @@ import {
 } from 'rxjs/operators'
 import { Lesson } from '../model/lesson'
 import { createHttpObservable } from '../utils/httpObservable'
+import { Store } from '../common/store.service'
 
 @Component({
     selector: 'course',
@@ -25,30 +26,19 @@ import { createHttpObservable } from '../utils/httpObservable'
     styleUrls: ['./course.component.css'],
 })
 export class CourseComponent implements OnInit, AfterViewInit {
-    course$: Observable<Course[]>
+    course$: Observable<Course>
     lessons$: Observable<Lesson[]>
-    public courseId: string
+    public courseId: number
 
     @ViewChild('searchInput', { static: true }) input: ElementRef
 
-    constructor(private route: ActivatedRoute) {}
+    constructor(private route: ActivatedRoute, private store: Store) {}
 
     ngOnInit() {
-        console.log('olá cursos')
         this.courseId = this.route.snapshot.params['id']
-        const course$ = (this.course$ = createHttpObservable(
-            `/api/courses/${this.courseId}`
-        ))
-        const lesson$ = this.loadLessons()
+        this.course$ = this.store.selectCourse(this.courseId)
 
-        forkJoin([course$, lesson$])
-            .pipe(
-                tap(([courseResponse, lessonResponse]) => {
-                    console.log('courseResponse', courseResponse)
-                    console.log('lessonResponse', lessonResponse)
-                })
-            )
-            .subscribe()
+        forkJoin([this.course$, this.loadLessons()]).subscribe(console.log)
     }
 
     ngAfterViewInit() {
